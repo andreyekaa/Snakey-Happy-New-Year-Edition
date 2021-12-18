@@ -40,11 +40,6 @@ def gameoverseee():
     win.blit(gameoversee, [w/6, h/3])
 
 
-def start_againsee():
-    start_againsee = fontagain.render(
-        'Press space to start again', 1, pygame.color('red'))
-    win.blit(start_againsee, [w/6, h/3+10])
-
 
 def cookiee():
     cookiex = randrange(0, 1040, a)
@@ -80,7 +75,6 @@ def eating_cookie(cookiex, cookiey, x, y, leng, head, arrsnakey, score):
 
 def game_over(score, gameover):
     win.blit(background, (0, 0))
-    start_againsee()
     gameoverseee()
 
     scoresee(score)
