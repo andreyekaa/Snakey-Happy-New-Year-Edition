@@ -21,7 +21,6 @@ clock = pygame.time.Clock()
 
 fontgameover = pygame.font.SysFont("Pixeboy", 160)
 fontscore = pygame.font.SysFont("Pixeboy", 50)
-fontagain = pygame.font.SysFont("Pixeboy", 50)
 
 
 def snakeyy(arrsnakey, x, y):
