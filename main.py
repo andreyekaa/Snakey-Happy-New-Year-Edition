@@ -181,6 +181,8 @@ def buttons_click(dx, dy, key):
 
     return: измененные в соотвествии с нажатой клавишей dx, dy
     """
+
+    """Заимствовано с видео, прикрепленного в README.md змейка за 5 минут"""
     buttons = {'W': True, 'S': True, 'A': True, 'D': True}
     if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
         dx = 0
@@ -204,7 +206,7 @@ def buttons_click(dx, dy, key):
         buttons = {'W': True, 'S': True, 'A': False, 'D': True}
     #x += dx
     #y += dy
-
+    """Заимствовано с видео, прикрепленного в README.md змейка за 5 минут"""
     return(dx, dy)
 
 
