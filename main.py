@@ -7,6 +7,7 @@ w = 1050
 h = 750
 sc = 20
 pygame.display.set_caption("Snakey 90s, Happy New Year Edition")
+global a
 a = 50
 
 clock = pygame.time.Clock()
@@ -182,17 +183,28 @@ def buttons_click(dx, dy, key):
     """
     buttons = {'W': True, 'S': True, 'A': True, 'D': True}
     if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
-        dx, dy = 0, -a
+        dx = 0
+        dy = -a
+        #dx, dy = 0, -a
         buttons = {'W': True, 'S': False, 'A': True, 'D': True}
     if (key[pygame.K_DOWN] or key[pygame.K_s]) and buttons['S']:
-        dx, dy = 0, a
+        dx = 0
+        dy = a
+        #dx, dy = 0, a
         buttons = {'W': False, 'S': True, 'A': True, 'D': True}
     if (key[pygame.K_LEFT] or key[pygame.K_a]) and buttons['A']:
-        dx, dy = -a, 0
+        dx = -a
+        dy = 0
+        #dx, dy = -a, 0
         buttons = {'W': True, 'S': True, 'A': True, 'D': False}
     if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
-        dx, dy = a, 0
+        dx = a
+        dy = 0
+        #dx, dy = a, 0
         buttons = {'W': True, 'S': True, 'A': False, 'D': True}
+    #x += dx
+    #y += dy
+
     return(dx, dy)
 
 
@@ -283,6 +295,7 @@ def gameplay():
 
             x += dx
             y += dy
+            #x, y = buttons_click(dx, dy, x, y, key)
 
             win.blit(background, (0, 0))
             #pygame.draw.rect(win, cookie,[cookiex, cookiey, a, a])
