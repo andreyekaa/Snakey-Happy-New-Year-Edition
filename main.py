@@ -21,7 +21,8 @@ def snakeyy(arrsnakey, x, y):
     """
     Задать змейку, ее размеры, цвет
 
-    arrsnakey -- массив 
+    arrsnakey -- массив змейки, состоящий из чисел
+    x, y -- координаты змейки
     """
     for i in arrsnakey:
         [(pygame.draw.rect(win, pygame.Color(156, 154, 217), [i, j, a, a]))
@@ -55,7 +56,7 @@ def gameoverseee(score, sc):
 
 def cookiee():
     """
-    Выводит печеньку, с помощью которой змейка будет расти
+    Выводит на экран печеньку, с помощью которой змейка будет расти
     """
     cookiex = randrange(0, 1040, a)
     cookiey = randrange(0, 740, a)
@@ -65,7 +66,7 @@ def cookiee():
 
 def treee():
     """
-    Выводит дерево, столкнувшись с которым игра заканчивается
+    Выводит на экран дерево, столкнувшись с которым игра заканчивается
     """
     treex = randrange(0, 1040, a)
     treey = randrange(0, 750, a)
@@ -80,6 +81,9 @@ def record(score, sc):
 
     score -- набранные очки
     sc -- рекордные очки
+
+    return измененные sc, если score оказалась больше
+    если score меньше, sc остается прежним
     """
     maxscore = score
     recordscore = sc
@@ -89,16 +93,16 @@ def record(score, sc):
     maxscore = 0
     return(sc)
 
-# def recscoresee(score, sc):
-#    sc = record(score, sc)
-#    recscoresee = fontsc.render(f'RECOD SCORE: {sc}', 1, pygame.Color('red'))
-#    win.blit(scoresee, [w/6, h/3+200])
-
 
 def collide_with_tree(treex, treey, x, y, score, gameover):
     """
     Проверяет на столкновение с деревом,
     если столкнулась - игра окончена
+
+    treex, treey -- координаты дерева
+    x, y -- координаты змейки
+    score -- заработанные на данный момент очки
+    gameover -- является параметром, идентифицирующим False
     """
     if x == treex and y == treey:
         game_over(score, gameover)
@@ -117,6 +121,7 @@ def eating_cookie(cookiex, cookiey, x, y, leng, head, arrsnakey, score, v):
     v -- скорость
     x, y -- координаты змейки
     cookiex, cookiey -- координаты печеньки
+    arrsnakey -- массив змейки, состоящий из чисел
     """
     if x == cookiex and y == cookiey:
         cookiee()
@@ -134,7 +139,11 @@ def game_over(score, gameover):
     """
     Проверяет на то, было ли окончание игры,
     если да - вызывается заливка экрана и надписи GAME OVER, score,
-    recordscore
+    recordscore, 
+    показывается экран с нужными надписями
+
+    score -- набранные очки
+    gameover -- является параметром, идентифицирующим False
     """
     win.blit(background, (0, 0))
     gameoverseee(score, sc)
@@ -150,19 +159,27 @@ def exit_from_game(gameover):
 
     Нажатие крестика -- выход из игры
     Нажатие пробела -- перезапуск игры
+
+    gameover -- является параметром, идентифицирующим False
     """
     for event in pygame.event.get():
         key = pygame.key.get_pressed()
         if event.type == pygame.QUIT:
             gameover = True
             exit()
-            o = True
         if key[pygame.K_SPACE]:
             gameplay()
-            o = True
 
-def buttons_click(dx, dy):
-    key = pygame.key.get_pressed()
+
+def buttons_click(dx, dy, key):
+    """Проверяет, какая клавиша была нажата.
+    При нажатии опредленных клавиш меняются скорость, а также ращрешение, какую кнопку нажать
+
+    dx, dy -- изменение координат змейки
+    key -- параметр запускающий метод pygame для читания нажатых клавиш
+
+    return: измененные в соотвествии с нажатой клавишей dx, dy
+    """
     buttons = {'W': True, 'S': True, 'A': True, 'D': True}
     if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
         dx, dy = 0, -a
@@ -176,23 +193,28 @@ def buttons_click(dx, dy):
     if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
         dx, dy = a, 0
         buttons = {'W': True, 'S': True, 'A': False, 'D': True}
-    if key[pygame.K_SPACE]:
-        gameplay()
-    return(dx, dy, buttons)
+    return(dx, dy)
 
-    
+
+def colliding_with_walls(x, y, w, h):
+    """Удар со стенами.
+    Если змейка ударяется о стену, она не может дальше идти, игра заканчивается
+
+    x, y -- координаты змейки
+    w -- ширина экрана (плоскости, где двигается змейка)
+    h -- высота экрана 
+
+    return: возвращает True, если змейка встретилась со стеной
+    возврващает False, если змейка не ударяется о стену 
+    """
+    if x >= w or x < 0 or y >= h or y < 0:
+        return True
+    return False
+
 
 def gameplay():
     """
     Сама игра, ее суть
-
-    Ключевые аргументы:
-    x, y -- координаты змейки
-    dx, dy -- изменение координат змейки
-    leng -- длина змейки
-    v -- скорость змейки
-    cookiex, cookiey -- координаты печенья
-    treex, treey -- координаты дерева
     """
     x = randrange(0, 1040, a)
     y = randrange(0, 740, a)
@@ -214,7 +236,10 @@ def gameplay():
     closing = False
 
     while not gameover:
-        buttons_click(dx, dy)
+        key = pygame.key.get_pressed()
+
+        dx, dy = buttons_click(dx, dy, key)
+
         win.blit(background, (0, 0))
         while closing == True:
             game_over(score, gameover)
@@ -226,25 +251,8 @@ def gameplay():
             if key[pygame.K_SPACE]:
                 gameplay()
 
-        
-
-            #buttons = {'W': True, 'S': True, 'A': True, 'D': True}
-            #if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
-            #    dx, dy = 0, -a
-            #    buttons = {'W': True, 'S': False, 'A': True, 'D': True}
-            #if (key[pygame.K_DOWN] or key[pygame.K_s]) and buttons['S']:
-            #    dx, dy = 0, a
-            #    buttons = {'W': False, 'S': True, 'A': True, 'D': True}
-            #if (key[pygame.K_LEFT] or key[pygame.K_a]) and buttons['A']:
-            #    dx, dy = -a, 0
-            #    buttons = {'W': True, 'S': True, 'A': True, 'D': False}
-            #if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
-            #    dx, dy = a, 0
-            #    buttons = {'W': True, 'S': True, 'A': False, 'D': True}
-            #if key[pygame.K_SPACE]:
-            #    gameplay()
-
-            
+            if key[pygame.K_SPACE]:
+                gameplay()
 
             if x == cookiex and y == cookiey:
                 eating_cookie(cookiex, cookiey, x, y,
@@ -271,7 +279,7 @@ def gameplay():
                 game_over(score, gameover)
 
             if x >= w or x < 0 or y >= h or y < 0:
-                closing = True
+                closing = colliding_with_walls(x, y, w, h)
 
             x += dx
             y += dy
