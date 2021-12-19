@@ -6,7 +6,7 @@ pygame.init()
 w = 1050
 h = 750
 sc = 20
-win = pygame.display.set_mode((w, h))
+win = pygame.display.set_mode((w, h), 1)
 pygame.display.set_caption("Snakey 90s, Happy New Year Edition")
 
 background = pygame.image.load("snow.png").convert()
@@ -29,6 +29,8 @@ fontagain = pygame.font.SysFont("Pixeboy", 90)
 def snakeyy(arrsnakey, x, y):
     """
     Задать змейку, ее размеры, цвет
+
+    arrsnakey -- массив 
     """
     for i in arrsnakey:
         [(pygame.draw.rect(win, pygame.Color(156, 154, 217), [i, j, a, a]))
@@ -47,7 +49,7 @@ def gameoverseee(score, sc):
     """
     При прогрыше выводит GAME OVER и рекордное количество очков
 
-    Ключевой аргумент:
+    score -- текущее набранное значение во время игры
     sc -- рекордное значение
     """
     gameoversee = fontgameover.render("GAME OVER", 1, pygame.Color('red'))
@@ -85,9 +87,8 @@ def record(score, sc):
     и если они больше - набранные становятся рекордом,
     если нет - рекорд остановится прежним
 
-    Ключевые аргументы:
-    maxscore -- набранные очки
-    recordscore -- рекордные очки
+    score -- набранные очки
+    sc -- рекордные очки
     """
     maxscore = score
     recordscore = sc
@@ -119,11 +120,12 @@ def eating_cookie(cookiex, cookiey, x, y, leng, head, arrsnakey, score, v):
     Проверяет на поедание печеньки, 
     после поедания увеличивает змейку, увеличивает очки, скорость
 
-    Ключевые аргументы:
     leng -- длина змейки
     head -- голова змейки
     score -- очки
     v -- скорость
+    x, y -- координаты змейки
+    cookiex, cookiey -- координаты печеньки
     """
     if x == cookiex and y == cookiey:
         cookiee()
@@ -173,13 +175,6 @@ def gameplay():
     """
     Сама игра, ее суть
 
-    Ключевые аргументы:
-    x, y -- координаты змейки
-    dx, dy -- изменение координат змейки
-    leng -- длина змейки
-    v -- скорость змейки
-    cookiex, cookiey -- координаты печенья
-    treex, treey -- координаты дерева
     """
     x = randrange(0, 1040, a)
     y = randrange(0, 740, a)
