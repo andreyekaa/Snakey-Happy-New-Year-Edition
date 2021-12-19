@@ -6,16 +6,7 @@ pygame.init()
 w = 1050
 h = 750
 sc = 20
-win = pygame.display.set_mode((w, h), 1)
 pygame.display.set_caption("Snakey 90s, Happy New Year Edition")
-
-background = pygame.image.load("snow.png").convert()
-snakey = (252, 186, 3)
-cookie = pygame.image.load("cookie.png").convert_alpha()
-tree = pygame.image.load("tree.png").convert_alpha()
-
-win.blit(background, (0, 0))
-
 a = 50
 
 clock = pygame.time.Clock()
@@ -170,6 +161,26 @@ def exit_from_game(gameover):
             gameplay()
             o = True
 
+def buttons_click(dx, dy):
+    key = pygame.key.get_pressed()
+    buttons = {'W': True, 'S': True, 'A': True, 'D': True}
+    if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
+        dx, dy = 0, -a
+        buttons = {'W': True, 'S': False, 'A': True, 'D': True}
+    if (key[pygame.K_DOWN] or key[pygame.K_s]) and buttons['S']:
+        dx, dy = 0, a
+        buttons = {'W': False, 'S': True, 'A': True, 'D': True}
+    if (key[pygame.K_LEFT] or key[pygame.K_a]) and buttons['A']:
+        dx, dy = -a, 0
+        buttons = {'W': True, 'S': True, 'A': True, 'D': False}
+    if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
+        dx, dy = a, 0
+        buttons = {'W': True, 'S': True, 'A': False, 'D': True}
+    if key[pygame.K_SPACE]:
+        gameplay()
+    return(dx, dy, buttons)
+
+    
 
 def gameplay():
     """
@@ -196,6 +207,7 @@ def gameplay():
     closing = False
 
     while not gameover:
+        buttons_click(dx, dy)
         win.blit(background, (0, 0))
         while closing == True:
             game_over(score, gameover)
@@ -207,21 +219,25 @@ def gameplay():
             if key[pygame.K_SPACE]:
                 gameplay()
 
-            buttons = {'W': True, 'S': True, 'A': True, 'D': True}
-            if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
-                dx, dy = 0, -a
-                buttons = {'W': True, 'S': False, 'A': True, 'D': True}
-            if (key[pygame.K_DOWN] or key[pygame.K_s]) and buttons['S']:
-                dx, dy = 0, a
-                buttons = {'W': False, 'S': True, 'A': True, 'D': True}
-            if (key[pygame.K_LEFT] or key[pygame.K_a]) and buttons['A']:
-                dx, dy = -a, 0
-                buttons = {'W': True, 'S': True, 'A': True, 'D': False}
-            if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
-                dx, dy = a, 0
-                buttons = {'W': True, 'S': True, 'A': False, 'D': True}
-            if key[pygame.K_SPACE]:
-                gameplay()
+        
+
+            #buttons = {'W': True, 'S': True, 'A': True, 'D': True}
+            #if (key[pygame.K_UP] or key[pygame.K_w]) and buttons['W']:
+            #    dx, dy = 0, -a
+            #    buttons = {'W': True, 'S': False, 'A': True, 'D': True}
+            #if (key[pygame.K_DOWN] or key[pygame.K_s]) and buttons['S']:
+            #    dx, dy = 0, a
+            #    buttons = {'W': False, 'S': True, 'A': True, 'D': True}
+            #if (key[pygame.K_LEFT] or key[pygame.K_a]) and buttons['A']:
+            #    dx, dy = -a, 0
+            #    buttons = {'W': True, 'S': True, 'A': True, 'D': False}
+            #if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
+            #    dx, dy = a, 0
+            #    buttons = {'W': True, 'S': True, 'A': False, 'D': True}
+            #if key[pygame.K_SPACE]:
+            #    gameplay()
+
+            
 
             if x == cookiex and y == cookiey:
                 eating_cookie(cookiex, cookiey, x, y,
@@ -281,4 +297,12 @@ def gameplay():
 
 
 if __name__ == "__main__":
+    win = pygame.display.set_mode((w, h), 1)
+    background = pygame.image.load("snow.png").convert()
+    snakey = (252, 186, 3)
+    cookie = pygame.image.load("cookie.png").convert_alpha()
+    tree = pygame.image.load("tree.png").convert_alpha()
+    win.blit(background, (0, 0))
+
     gameplay()
+    pygame.QUIT()
