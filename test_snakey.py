@@ -43,6 +43,3 @@ class TestGames(unittest.TestCase):
         sc = 20
         assert(main.record(score, sc), sc)
 
-
-
-
