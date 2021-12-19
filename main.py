@@ -5,13 +5,14 @@ from random import randrange
 pygame.init()
 w = 1050
 h = 750
+sc = 20
 win = pygame.display.set_mode((w, h))
 pygame.display.set_caption("Snakey 90s, Happy New Year Edition")
 
 background = pygame.image.load("snow.png").convert()
 snakey = (252, 186, 3)
-cookie = pygame.image.load("cookie.png").convert()
-tree = pygame.image.load("tree.png").convert()
+cookie = pygame.image.load("cookie.png").convert_alpha()
+tree = pygame.image.load("tree.png").convert_alpha()
 
 win.blit(background, (0, 0))
 
@@ -21,26 +22,48 @@ clock = pygame.time.Clock()
 
 fontgameover = pygame.font.SysFont("Pixeboy", 160)
 fontscore = pygame.font.SysFont("Pixeboy", 50)
+fontsc = pygame.font.SysFont("Pixeboy", 50)
+fontagain = pygame.font.SysFont("Pixeboy", 90)
 
 
 def snakeyy(arrsnakey, x, y):
+    """
+    Задать змейку, ее размеры, цвет
+    """
     for i in arrsnakey:
-        [(pygame.draw.rect(win, pygame.Color(252, 186, 3), [i, j, a, a]))
+        [(pygame.draw.rect(win, pygame.Color(156, 154, 217), [i, j, a, a]))
          for i, j in arrsnakey]
 
 
 def scoresee(score):
-    scoresee = fontscore.render(f'SCORE: {score}', 1, pygame.Color('brown'))
+    """
+    Выводит количество очков, зарабатонных в игре.
+    """
+    scoresee = fontscore.render(f'SCORE: {score}', 2, pygame.Color('brown'))
     win.blit(scoresee, [0, 0])
 
 
-def gameoverseee():
-    gameoversee = fontgameover.render('GAME OVER', 1, pygame.Color('red'))
-    win.blit(gameoversee, [w/6, h/3])
+def gameoverseee(score, sc):
+    """
+    При прогрыше выводит GAME OVER и рекордное количество очков
 
+    Ключевой аргумент:
+    sc -- рекордное значение
+    """
+    gameoversee = fontgameover.render("GAME OVER", 1, pygame.Color('red'))
+    win.blit(gameoversee, [w/6, h/3])
+    sc = record(score, sc)
+    scsee = fontsc.render(f'RECORD SCORE: {sc}', 1, pygame.Color(110, 47, 49))
+    win.blit(scsee, [w/6, h/3+200])
+    againsee = fontagain.render(
+        "PRESS SPACE TO START AGAIN", 1, pygame.Color('red'))
+    win.blit(againsee, [w/6-138, h/3+400])
 
 
 def cookiee():
+    """
+    Выводит печеньку, с помощью которой змейка будет расти
+    """
     cookiex = randrange(0, 1040, a)
     cookiey = randrange(0, 740, a)
     win.blit(cookie, (cookiex, cookiey))
@@ -48,47 +71,116 @@ def cookiee():
 
 
 def treee():
+    """
+    Выводит дерево, столкнувшись с которым игра заканчивается
+    """
     treex = randrange(0, 1040, a)
     treey = randrange(0, 750, a)
     win.blit(tree, (treex, treey))
 
 
+def record(score, sc):
+    """
+    Набранные очки сравнивает с рекордом,
+    и если они больше - набранные становятся рекордом,
+    если нет - рекорд остановится прежним
+
+    Ключевые аргументы:
+    maxscore -- набранные очки
+    recordscore -- рекордные очки
+    """
+    maxscore = score
+    recordscore = sc
+
+    if maxscore > recordscore:
+        sc = maxscore
+    maxscore = 0
+    return(sc)
+
+# def recscoresee(score, sc):
+#    sc = record(score, sc)
+#    recscoresee = fontsc.render(f'RECOD SCORE: {sc}', 1, pygame.Color('red'))
+#    win.blit(scoresee, [w/6, h/3+200])
+
+
 def collide_with_tree(treex, treey, x, y, score, gameover):
+    """
+    Проверяет на столкновение с деревом,
+    если столкнулась - игра окончена
+    """
     if x == treex and y == treey:
         game_over(score, gameover)
         pygame.display.update
         exit_from_game(gameover)
 
 
-def eating_cookie(cookiex, cookiey, x, y, leng, head, arrsnakey, score):
+def eating_cookie(cookiex, cookiey, x, y, leng, head, arrsnakey, score, v):
+    """
+    Проверяет на поедание печеньки, 
+    после поедания увеличивает змейку, увеличивает очки, скорость
+
+    Ключевые аргументы:
+    leng -- длина змейки
+    head -- голова змейки
+    score -- очки
+    v -- скорость
+    """
     if x == cookiex and y == cookiey:
         cookiee()
         leng += 1
         head = [x, y]
         arrsnakey.append(head)
         score += 1
+        v += 1
         treee()
         pygame.display.update()
         pygame.display.flip()
 
 
 def game_over(score, gameover):
+    """
+    Проверяет на то, было ли окончание игры,
+    если да - вызывается заливка экрана и надписи GAME OVER, score,
+    recordscore
+    """
     win.blit(background, (0, 0))
-    gameoverseee()
-
+    gameoverseee(score, sc)
     scoresee(score)
     pygame.display.update()
     exit_from_game(gameover)
 
 
 def exit_from_game(gameover):
+    """
+    Проверяет нажатие кнопок: крестик наверху окна
+    и пробел на клавиатуре.
+
+    Нажатие крестика -- выход из игры
+    Нажатие пробела -- перезапуск игры
+    """
     for event in pygame.event.get():
+        key = pygame.key.get_pressed()
         if event.type == pygame.QUIT:
             gameover = True
             exit()
+            o = True
+        if key[pygame.K_SPACE]:
+            gameplay()
+            o = True
 
 
 def gameplay():
+    """
+    Сама игра, ее суть
+
+    Ключевые аргументы:
+    x, y -- координаты змейки
+    dx, dy -- изменение координат змейки
+    leng -- длина змейки
+    v -- скорость змейки
+    cookiex, cookiey -- координаты печенья
+    treex, treey -- координаты дерева
+    """
     x = randrange(0, 1040, a)
     y = randrange(0, 740, a)
     dx = 0
@@ -133,10 +225,12 @@ def gameplay():
             if (key[pygame.K_RIGHT] or key[pygame.K_d]) and buttons['D']:
                 dx, dy = a, 0
                 buttons = {'W': True, 'S': True, 'A': False, 'D': True}
+            if key[pygame.K_SPACE]:
+                gameplay()
 
             if x == cookiex and y == cookiey:
                 eating_cookie(cookiex, cookiey, x, y,
-                              leng, head, arrsnakey, score)
+                              leng, head, arrsnakey, score, v)
 
                 win.blit(background, (0, 0))
 
@@ -150,7 +244,7 @@ def gameplay():
                 win.blit(tree, (treex, treey))
 
                 score += 1
-
+                v += 1
                 pygame.display.update
 
             if x == treex and y == treey:
@@ -186,11 +280,11 @@ def gameplay():
 
             snakeyy(arrsnakey, x, y)
             scoresee(score)
-            # pygame.display.update()
 
             pygame.display.flip()
-            clock.tick(1000)
+            clock.tick(v)
 
 
 if __name__ == "__main__":
     gameplay()
+
